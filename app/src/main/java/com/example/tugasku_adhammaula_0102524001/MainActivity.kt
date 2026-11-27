@@ -3,45 +3,29 @@ package com.example.tugasku_adhammaula_0102524001
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tugasku_adhammaula_0102524001.data.local.SettingsDataStore
+import com.example.tugasku_adhammaula_0102524001.data.local.TugasDatabase
+import com.example.tugasku_adhammaula_0102524001.data.repository.TugasRepository
+import com.example.tugasku_adhammaula_0102524001.ui.navigation.AppNavigation
 import com.example.tugasku_adhammaula_0102524001.ui.theme.TugasKu_AdhamMaula_0102524001Theme
+import com.example.tugasku_adhammaula_0102524001.ui.viewmodel.TugasViewModel
+import com.example.tugasku_adhammaula_0102524001.ui.viewmodel.TugasViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        val database = TugasDatabase.getDatabase(applicationContext)
+        val settingsDataStore = SettingsDataStore(applicationContext)
+        val repository = TugasRepository(database.tugasDao(), settingsDataStore)
+        val factory = TugasViewModelFactory(repository)
+
         setContent {
             TugasKu_AdhamMaula_0102524001Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                val viewModel: TugasViewModel = viewModel(factory = factory)
+                AppNavigation(viewModel = viewModel)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TugasKu_AdhamMaula_0102524001Theme {
-        Greeting("Android")
     }
 }
